@@ -9,5 +9,10 @@ namespace Model
     public class Proff:Base
     {
         public string ProffName { get; set; }
+
+        public override string ToString()
+        {
+            return ProffName;
+        }
     }
 }

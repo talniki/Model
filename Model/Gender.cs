@@ -9,5 +9,10 @@ namespace Model
     public class Gender:Base
     {
         public string GenderName { get; set; }
+        public override string ToString()
+        {
+            return GenderName;
+        }
     }
+
 }

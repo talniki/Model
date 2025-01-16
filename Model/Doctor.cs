@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Model
 {
-    public class Doctor:Base
+    public class Doctor:Person
     {
-        public string specialization { get; set; }
+        public Proff specialization { get; set; }
+        public override string ToString()
+        {
+            return "proff: " + specialization.ProffName+", Fname:"+this.Fname;
+        }
     }
 }

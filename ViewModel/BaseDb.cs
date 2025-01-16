@@ -7,47 +7,46 @@ namespace ViewModel
     public abstract class BaseDb
     {  //protected static string connectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\nativ\Downloads\project\project\ViewModel\HishtalmutFinal.accdb";
         protected static string connectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + Path.GetFullPath(System.Reflection.Assembly.GetExecutingAssembly().Location
-            + "/../../../../../../ViewModel/game.accdb");
+            + "/../../../../../ViewModel/talproject.accdb");
         protected OleDbConnection connection;
         protected OleDbCommand command;
         protected OleDbDataReader reader;
 
-        //public static List<ChangeEntity> inserted = new List<ChangeEntity>();
-        //public static List<ChangeEntity> deleted = new List<ChangeEntity>();
-        //public static List<ChangeEntity> updated = new List<ChangeEntity>();
+        public static List<ChangeEntity> inserted = new List<ChangeEntity>();
+        public static List<ChangeEntity> deleted = new List<ChangeEntity>();
+        public static List<ChangeEntity> updated = new List<ChangeEntity>();
 
-        //protected abstract void CreateInsertSQL(Base entity, OleDbCommand cmd);
-        //protected abstract void CreateUpdateSQL(Base entity, OleDbCommand cmd);
-        //protected abstract void CreateDeletedSQL(Base entity, OleDbCommand cmd);
+        protected abstract void CreateInsertSQL(Base entity, OleDbCommand cmd);
+        protected abstract void CreateUpdateSQL(Base entity, OleDbCommand cmd);
+        protected abstract void CreateDeletedSQL(Base entity, OleDbCommand cmd);
 
         protected abstract Base NewEntity();
 
-        //public virtual void Insert(Base entity)
-        //{
-        //    Base reqEntity = this.NewEntity();
-        //    if (entity != null & entity.GetType() == reqEntity.GetType())
-        //    {
-        //        inserted.Add(new ChangeEntity(this.CreateInsertSQL, entity)); ;
-        //    }
-        //}
+        public virtual void Insert(Base entity)
+        {
+            Base reqEntity = this.NewEntity();
+            if (entity != null & entity.GetType() == reqEntity.GetType())
+            {
+                inserted.Add(new ChangeEntity(this.CreateInsertSQL, entity)); ;
+            }
+        }
 
-        //public virtual void Update(Base entity)
-        //{
-        //    Base reqEntity = this.NewEntity();
-        //    if (entity != null & entity.GetType() == reqEntity.GetType())
-        //    {
-        //        updated.Add(new ChangeEntity(this.CreateUpdateSQL, entity));
-        //    }
-        //}
-
-        //public virtual void Delete(Base entity)
-        //{
-        //    Base reqEntity = this.NewEntity();
-        //    if (entity != null & entity.GetType() == reqEntity.GetType())
-        //    {
-        //        deleted.Add(new ChangeEntity(this.CreateDeletedSQL, entity));
-        //    }
-        //}
+        public virtual void Update(Base entity)
+        {
+            Base reqEntity = this.NewEntity();
+            if (entity != null & entity.GetType() == reqEntity.GetType())
+            {
+                updated.Add(new ChangeEntity(this.CreateUpdateSQL, entity));
+            }
+        }
+        public virtual void Delete(Base entity)
+        {
+            Base reqEntity = this.NewEntity();
+            if (entity != null & entity.GetType() == reqEntity.GetType())
+            {
+                deleted.Add(new ChangeEntity(this.CreateDeletedSQL, entity));
+            }
+        }
 
         protected List<Base> Select()
         {
@@ -121,62 +120,62 @@ namespace ViewModel
             command.Connection = connection;
         }
 
-        //public int SaveChanges()
-        //{
-        //    OleDbTransaction trans = null;
-        //    int records_affected = 0;
+        public int SaveChanges()
+        {
+            OleDbTransaction trans = null;
+            int records_affected = 0;
 
-        //    try
-        //    {
-        //        command.Connection = connection;
-        //        connection.Open();
-        //        trans = connection.BeginTransaction();
-        //        command.Transaction = trans;
+            try
+            {
+                command.Connection = connection;
+                connection.Open();
+                trans = connection.BeginTransaction();
+                command.Transaction = trans;
 
-        //        foreach (var entity in inserted)
-        //        {
-        //            command.Parameters.Clear();
-        //            entity.CreateSql(entity.Entity, command); //cmd.CommandText = CreateInsertSQL(entity.Entity);
-        //            records_affected += command.ExecuteNonQuery();
+                foreach (var entity in inserted)
+                {
+                    command.Parameters.Clear();
+                    entity.CreateSql(entity.Entity, command); //cmd.CommandText = CreateInsertSQL(entity.Entity);
+                    records_affected += command.ExecuteNonQuery();
 
-        //            command.CommandText = "Select @@Identity";
-        //            entity.Entity.Id = (int)command.ExecuteScalar();
-        //        }
+                    command.CommandText = "Select @@Identity";
+                    entity.Entity.Id = (int)command.ExecuteScalar();
+                }
 
-        //        foreach (var entity in updated)
-        //        {
-        //            command.Parameters.Clear();
-        //            entity.CreateSql(entity.Entity, command); //cmd.CommandText = CreateUpdateSQL(entity.Entity);
-        //            records_affected += command.ExecuteNonQuery();
-        //        }
+                foreach (var entity in updated)
+                {
+                    command.Parameters.Clear();
+                    entity.CreateSql(entity.Entity, command); //cmd.CommandText = CreateUpdateSQL(entity.Entity);
+                    records_affected += command.ExecuteNonQuery();
+                }
 
-        //        foreach (var entity in deleted)
-        //        {
-        //            command.Parameters.Clear();
-        //            entity.CreateSql(entity.Entity, command);
+                foreach (var entity in deleted)
+                {
+                    command.Parameters.Clear();
+                    entity.CreateSql(entity.Entity, command);
 
-        //            records_affected += command.ExecuteNonQuery();
-        //        }
+                    records_affected += command.ExecuteNonQuery();
+                }
 
-        //        trans.Commit();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        trans.Rollback();
-        //        System.Diagnostics.Debug.WriteLine(ex.Message + "\n SQL:" + command.CommandText);
-        //    }
-        //    finally
-        //    {
-        //        inserted.Clear();
-        //        updated.Clear();
-        //        deleted.Clear();
+                trans.Commit();
+            }
+            catch (Exception ex)
+            {
+                trans.Rollback();
+                System.Diagnostics.Debug.WriteLine(ex.Message + "\n SQL:" + command.CommandText);
+            }
+            finally
+            {
+                inserted.Clear();
+                updated.Clear();
+                deleted.Clear();
 
-        //        if (connection.State == System.Data.ConnectionState.Open)
-        //            connection.Close();
-        //    }
+                if (connection.State == System.Data.ConnectionState.Open)
+                    connection.Close();
+            }
 
-        //    return records_affected;
-        //}
+            return records_affected;
+        }
 
         //public async Task<int> SaveChangesAsync()
         //{

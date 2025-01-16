@@ -13,5 +13,10 @@ namespace Model
         public string IDnum { get; set; }
         public DateTime BirthDate { get; set; }
         public Gender Gender { get; set; }
+
+        public override string ToString()
+        {
+            return Fname + " , " + Lname + " , " + IDnum + " , " + BirthDate + " , " + Gender.GenderName;
+        }
     }
 }
